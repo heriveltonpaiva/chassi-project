@@ -1,22 +1,60 @@
 {
-  "name": "electron-quick-start",
+  "name": "chassi-project",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "Consultador de veiculos por chassi",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron-forge start",
+    "build": "electron-packager . app --platform linux --arch x64 --out dist/",
+    "deb64": "electron-installer-debian --src dist/app-linux-x64/ --dest dist/installers/ --arch amd64",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "https://github.com/heriveltonpaiva/chassi-project",
   "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
+    "Chassi",
+    "veiculos"
   ],
-  "author": "GitHub",
-  "license": "CC0-1.0",
+  "author": "heriveltonpaiva",
   "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.58",
+    "@electron-forge/maker-deb": "^6.0.0-beta.58",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.58",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.58",
+    "@electron-forge/maker-zip": "^6.0.0-beta.58",
     "electron": "^13.1.7"
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.0",
+    "jspdf": "^2.3.1",
+    "rpmbuild": "0.0.23",
+    "xml2json-light": "^1.0.6"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "chassi_project"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ]
+    }
   }
 }
