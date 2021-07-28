@@ -21,29 +21,29 @@ function replaceMe(data) {
 }
 
 exports.create = function(data) {
-  const dataVehicle = getDataVehicle(data.dadosVeiculo, data.carga);
+  const dataVehicle = getDataVehicle(data.saida.rt02['veiculo'], data.saida.rt02['carga']);
   return replaceMe(dataVehicle);
 }
 
 function getDataVehicle(veiculo, carga){
 const vehicle = {
- "chassi": veiculo.chassi,
- "model": veiculo.marcaModelo,
- "type" : veiculo.tipo,
- "modelYear": veiculo.anoModelo,
- "factoryYear" : veiculo.anoFabricacao,
- "potency" : veiculo.potencia + "cv "+veiculo.cilindradas+" cc",
- "body": veiculo.carroceria,
- "gas": veiculo.combustivel,
- "especie": veiculo.especie,
- "color": veiculo.cor,
- "capacity": veiculo.capacidadePassageiro,
- "motorNumber": veiculo.numeroMotor,
- "cambioNumber": veiculo.numeroCambio,
- "cmtCarga": carga.cmt,
- "pbtCarga": carga.pbt,
- "capacityCarga": carga.capacidadeCarga,
- "eixosCarga": carga.eixos,
+ "chassi": veiculo['chassi'],
+ "model": veiculo['cod-marca-modelo']+" - "+veiculo['marca-modelo'],
+ "type" : veiculo['cod-tipo-veiculo']+" - "+veiculo['tipo-veiculo'],
+ "modelYear": veiculo['ano-modelo'],
+ "factoryYear" : veiculo['ano-fabricacao'],
+ "potency" : veiculo['potencia'] + "cv "+veiculo['cilindradas']+" cc",
+ "body": veiculo['cod-tipo-carroceria']+" - "+veiculo['tipo-carroceria'],
+ "gas": veiculo['cod-combustivel']+" - "+veiculo['combustivel'],
+ "especie": veiculo['cod-especie']+" - "+veiculo['especie'],
+ "color": veiculo['cod-cor']+" - "+veiculo['cor'],
+ "capacity": veiculo['capacidade-passageiros'],
+ "motorNumber": veiculo['num-motor'],
+ "cambioNumber": veiculo['num-cambio'],
+ "cmtCarga": carga['cmt'],
+ "pbtCarga": carga['pbt'],
+ "capacityCarga": carga['capacidade-carga'],
+ "eixosCarga": carga['num-eixos'],
 
 }
 return vehicle;
