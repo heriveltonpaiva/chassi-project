@@ -101,10 +101,6 @@ window.addEventListener('DOMContentLoaded', () => {
         updateProgressBar(0);
     })
 
-    document.getElementById('printPDFBtn').addEventListener('click', () => {
-        pdf.openPdf();
-    })
-
 })
 
 function processTextAndGeneratePdf(dataList, mainList, quantity){

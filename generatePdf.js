@@ -1,9 +1,9 @@
 const { jsPDF } = require("jspdf");
+var currentPath = process.cwd();
 
 exports.openPdf = function(){
     const pdfFileName = document.getElementById('pdfFileName').value;
-    console.log('Download do arquivo: files/' + pdfFileName)
-    var docLocation = 'files/' + pdfFileName;
+    var docLocation = __dirname+'/files/' + pdfFileName;
     window.open(docLocation, "resizeable,scrollbar");
 }
 
@@ -31,6 +31,7 @@ exports.generatePDF = function(textList, pdfFileName) {
             totalList++;
         });
 
-        doc.save("files/" + pdfFileName + ".pdf");
-        document.getElementById('pdfFileName').value = pdfFileName + '.pdf';
+        doc.save(currentPath+'/resources/'+pdfFileName + ".pdf");
+        document.getElementById('pdfFileName').href = currentPath+'/resources/'+pdfFileName + '.pdf';
+        document.getElementById('pdfFileName').innerHTML = 'Baixar arquivo ' +pdfFileName + '.pdf';
     }
