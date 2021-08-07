@@ -17,11 +17,29 @@
         <div class="card-body">
             <p class="h3" style="text-align:center;">Consulta de Veículos</p>
             <br>
+            <p>Selecione uma opção de busca:</p>
+
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="radio" class="form-check-input" name="optradio" id="chassiRadio" value="1">Chassi
+                </label>
+            </div>
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="radio" class="form-check-input" name="optradio" id="chassiRadioDigit" value="2">Chassi c/ Digito Verificador
+                </label>
+            </div>
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="radio" class="form-check-input" name="optradio" id="motorRadio" value="3">Motor
+                </label>
+            </div>
+            <br>
             <label for="chassiNumber" class="form-label">Chassi do veículo</label>
             <input class="form-control" id="chassiNumber" maxlength="17" placeholder="Informe o número do chassi"/>
             <label for="chassiNumber" class="form-label">Lote</label>
             <div class="row g-2">
-                <input class="form-control" id="quantity" maxlength="3" placeholder="Quantidade"
+                <input class="form-control" id="quantity" maxlength="4" placeholder="Quantidade"
                        style="margin-left:15px; width:20%; margin-right:5px;"/>
                 <button type="button" class="btn btn-primary btnEd" id="btnEd">
                     Iniciar processo
@@ -31,6 +49,12 @@
                 </button>
             </div>
             <label for="processArea" class="form-label">Acompanhamento</label>
+            <div style="float:right;">
+            <label class="form-label" style="font-size:13px"><em>Total encontrado:</em></label>
+                <label id="valueFound" style="font-weight:bold; font-size:13px; color:blue;">1000</label>
+            <label class="form-label" style="font-size:13px"><em>Total processado:</em></label>
+                <label id="totalFound" style="font-weight:bold; font-size:13px; color:blue;">10/1000</label>
+            </div>
             <textarea class="form-control" rows="10" cols="8" id="processArea" disabled></textarea>
             <div style="text-align:center;"><a id="pdfFileName" href="" target="_blank"></a></div>
             <br>

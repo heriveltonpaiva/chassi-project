@@ -40,6 +40,7 @@ window.addEventListener('DOMContentLoaded', () => {
     async function processChassi(chassiList) {
         let progress = 0;
         var dataList = new Array();
+        var totalChassiFound = 0;
         for (const [idx, chassiNumber] of chassiList.entries()) {
             const response = await fetch(apiUrl+chassiNumber).then(function (response) {
                 return response;
@@ -66,7 +67,11 @@ window.addEventListener('DOMContentLoaded', () => {
                     dataList.push(data);
                     console.log(dataList)
                 }
+                totalChassiFound++;
+                document.getElementById('valueFound').innerHTML = totalChassiFound;
             }
+            const totalToProcess = document.getElementById('totalFound').textContent.split('/')[1];
+            document.getElementById('totalFound').innerHTML = index+"/"+totalToProcess;
         }
 
         registerLog('Processamento finalizado!')
@@ -127,17 +132,31 @@ function registerLog(message) {
 
 function generateChassiList(chassi, quantity){
     var list = new Array();
-    const initial = chassi.substring(0, 11);
-    const sequence = chassi.substring(11);
+    const initial = chassi.substring(0, 13);
+    const sequence = chassi.substring(13);
 
     let nextValue = parseInt(sequence);
     let cont = 0;
 
     while (cont < quantity) {
         list.push(initial.concat(nextValue))
+        if(getOptionValueChecked() == 2){
+          var count = 0;
+          var total = 10;
+          var digit = "X";
+          while(count <= total){
+             const init = chassi.substring(0,8);
+             const sequence = chassi.substring(9,13);
+             console.log(init.concat(digit).concat(sequence).concat(nextValue));
+             list.push(init.concat(digit).concat(sequence).concat(nextValue))
+             digit = count;
+             count++;
+          }
+        }
         cont++;
         nextValue = parseInt(sequence) + cont;
     }
+    document.getElementById('totalFound').innerHTML = "0/"+list.length;
    return list;         
 }
 
@@ -158,4 +177,13 @@ function validate(chassi, quantity) {
         registerLog('Campo: chassi não informado.')
     }
     return validated;
+}
+
+function getOptionValueChecked() {
+  var ele = document.getElementsByName('optradio');
+  for(i = 0; i < ele.length; i++) {
+    if(ele[i].checked){
+      return ele[i].value;
+    }
+  }
 }

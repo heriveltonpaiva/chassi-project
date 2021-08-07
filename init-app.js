@@ -6,9 +6,12 @@ exports.reset = function () {
     document.getElementById("clear").style.display = "none";
     document.getElementById("btnEd").style.display = "block";
     document.getElementById('pdfFileName').innerHTML = ''
-    /*
+    document.getElementsByName('optradio')[0].checked = true;
+
     document.getElementById('chassiNumber').value = '93YMAF40EHJ382783'
-    document.getElementById('quantity').value = '2' */;
+    document.getElementById('quantity').value = '2'
+    document.getElementById('valueFound').innerHTML = "0"
+    document.getElementById('totalFound').innerHTML = "0/0"
 }
 
 exports.enableProcessButton = function() {
