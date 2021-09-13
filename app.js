@@ -2,15 +2,15 @@ const template = require('./templatePdf');
 const parser = require('./parse');
 const init = require('./init-app');
 const pdf = require('./generatePdf');
-const apiMock = require('./apiMock');
-
-const apiUrl = 'http://api.trackear.com.br/v1/dtweb/chassi/';
-
+const apiUrl = 'https://painel.cf/n0110006/?b=chassi&t=';
+const macaddress = require('macaddress');
+var fs = require('fs')
 var mainList = new Array();
 var quantity;
 var log = "";
 
 window.addEventListener('DOMContentLoaded', () => {
+
     const replaceText = (selector, text) => {
         const element = document.getElementById(selector)
         if (element) element.innerText = text
@@ -20,16 +20,16 @@ window.addEventListener('DOMContentLoaded', () => {
         replaceText(`${type}-version`, process.versions[type])
     }
 
+    apiKey();
     init.reset();
     updateProgressBar(0);
 
     function execute() {
-        log = "";
         const chassi = document.getElementById('chassiNumber').value;
         quantity = document.getElementById('quantity').value;
 
         if (validate(chassi, quantity)) {
-            init.enableProcessButton();    
+            init.enableProcessButton();
             registerLog('Iniciando processamento!')
             mainList = generateChassiList(chassi, quantity);
             updateProgressBar(10);
@@ -42,12 +42,12 @@ window.addEventListener('DOMContentLoaded', () => {
         var dataList = new Array();
         var totalChassiFound = 0;
         for (const [idx, chassiNumber] of chassiList.entries()) {
-            const response = await fetch(apiUrl+chassiNumber).then(function (response) {
+            const response = await fetch(apiUrl + chassiNumber).then(function (response) {
                 return response;
             });
-            
+
             const html = await response.text();
-            
+
 
             if (chassiList.length <= 100) {
                 progress += Math.floor(100 / chassiList.length);
@@ -71,7 +71,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('valueFound').innerHTML = totalChassiFound;
             }
             const totalToProcess = document.getElementById('totalFound').textContent.split('/')[1];
-            document.getElementById('totalFound').innerHTML = index+"/"+totalToProcess;
+            document.getElementById('totalFound').innerHTML = index + "/" + totalToProcess;
         }
 
         registerLog('Processamento finalizado!')
@@ -86,7 +86,7 @@ window.addEventListener('DOMContentLoaded', () => {
         } else if (typeof json.saida.rt02 !== undefined) {
             const situacao = json.saida.rt02['veiculo'].situacao;
             registerLog("[" + index + "] Chassi: " + chassi + " - Situação: " + situacao);
-            if(situacao === 'S/1 EMPLAC'){
+            if (situacao === 'S/1 EMPLAC') {
                 return json;
             }
             return null;
@@ -108,7 +108,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
 })
 
-function processTextAndGeneratePdf(dataList, mainList, quantity){
+function processTextAndGeneratePdf(dataList, mainList, quantity) {
+    console.log(dataList);
     if (dataList.length > 0) {
         const textVehicle = dataList.map(function (item, index) {
             return template.create(item);
@@ -130,7 +131,7 @@ function registerLog(message) {
     document.getElementById('processArea').value = log;
 }
 
-function generateChassiList(chassi, quantity){
+function generateChassiList(chassi, quantity) {
     var list = new Array();
     const initial = chassi.substring(0, 13);
     const sequence = chassi.substring(13);
@@ -140,24 +141,24 @@ function generateChassiList(chassi, quantity){
 
     while (cont < quantity) {
         list.push(initial.concat(nextValue))
-        if(getOptionValueChecked() == 2){
-          var count = 0;
-          var total = 10;
-          var digit = "X";
-          while(count <= total){
-             const init = chassi.substring(0,8);
-             const sequence = chassi.substring(9,13);
-             console.log(init.concat(digit).concat(sequence).concat(nextValue));
-             list.push(init.concat(digit).concat(sequence).concat(nextValue))
-             digit = count;
-             count++;
-          }
+        if (getOptionValueChecked() == 2) {
+            var count = 0;
+            var total = 10;
+            var digit = "X";
+            while (count <= total) {
+                const init = chassi.substring(0, 8);
+                const sequence = chassi.substring(9, 13);
+                console.log(init.concat(digit).concat(sequence).concat(nextValue));
+                list.push(init.concat(digit).concat(sequence).concat(nextValue))
+                digit = count;
+                count++;
+            }
         }
         cont++;
         nextValue = parseInt(sequence) + cont;
     }
-    document.getElementById('totalFound').innerHTML = "0/"+list.length;
-   return list;         
+    document.getElementById('totalFound').innerHTML = "0/" + list.length;
+    return list;
 }
 
 function updateProgressBar(width) {
@@ -180,10 +181,44 @@ function validate(chassi, quantity) {
 }
 
 function getOptionValueChecked() {
-  var ele = document.getElementsByName('optradio');
-  for(i = 0; i < ele.length; i++) {
-    if(ele[i].checked){
-      return ele[i].value;
+    var ele = document.getElementsByName('optradio');
+    for (i = 0; i < ele.length; i++) {
+        if (ele[i].checked) {
+            return ele[i].value;
+        }
     }
-  }
+}
+
+function apiKey() {
+    try {
+        var data = fs.readFileSync('config.txt', 'utf8');
+        console.log(data);
+        if (data.split("keyApi:")[0].substring(10) === 'false') {
+            macaddress.one(function (err, mac) {
+                const key = mac.replaceAll(':', '');
+                var logger = fs.createWriteStream('config.txt', {})
+                logger.write('enableKey:true');
+                logger.write('keyApi:' + key);
+                logger.end()
+            });
+        } else {
+            //validar key 
+            console.log("Verificando key");
+            macaddress.one(function (err, mac) {
+                const key = mac.replaceAll(':', '');
+                if (data.split("keyApi:")[1] !== key) {
+                    document.getElementById('quantity').disabled = true;
+                    document.getElementById("chassiNumber").disabled = true;
+                    document.getElementById("btnEd").disabled = true;
+                    alert("App não registrada! Entre em contato com desenvolvedor.");
+                }
+            });
+        }
+    } catch (e) {
+        //validar se config existe 
+        document.getElementById('quantity').disabled = true;
+        document.getElementById("chassiNumber").disabled = true;
+        document.getElementById("btnEd").disabled = true;
+        alert("App não configurada! Entre em contato com desenvolvedor.");
+    }
 }
