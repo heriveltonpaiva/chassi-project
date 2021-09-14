@@ -19,12 +19,13 @@ window.addEventListener('DOMContentLoaded', () => {
     for (const type of ['chrome', 'node', 'electron']) {
         replaceText(`${type}-version`, process.versions[type])
     }
-
+    
     apiKey();
     init.reset();
     updateProgressBar(0);
 
     function execute() {
+        log = "";
         const chassi = document.getElementById('chassiNumber').value;
         quantity = document.getElementById('quantity').value;
 
@@ -42,36 +43,45 @@ window.addEventListener('DOMContentLoaded', () => {
         var dataList = new Array();
         var totalChassiFound = 0;
         for (const [idx, chassiNumber] of chassiList.entries()) {
+            
             const response = await fetch(apiUrl + chassiNumber).then(function (response) {
                 return response;
+            }).catch(function(error) {
+                registerLog("Falha de comunicação da API.");
             });
 
-            const html = await response.text();
-
-
-            if (chassiList.length <= 100) {
-                progress += Math.floor(100 / chassiList.length);
-                updateProgressBar(progress);
-            } else {
-                if (idx % Math.floor(chassiList.length / 100) == 0) {
-                    updateProgressBar(progress++);
-                }
-            }
-
             const index = idx + 1;
-            if (html == '') {
-                registerLog("[" + index + "] Chassi: " + chassiNumber + " - Falha de comunicação externa.")
-            } else {
-                const data = saveResponse(parser.xmlToJson(html), index, chassiNumber);
-                if (data != null) {
-                    dataList.push(data);
-                    console.log(dataList)
+            try {
+                const jsonBody = await response.json();
+
+                if (chassiList.length <= 100) {
+                    progress += Math.floor(100 / chassiList.length);
+                    updateProgressBar(progress);
+                } else {
+                    if (idx % Math.floor(chassiList.length / 100) == 0) {
+                        updateProgressBar(progress++);
+                    }
                 }
-                totalChassiFound++;
-                document.getElementById('valueFound').innerHTML = totalChassiFound;
+
+                
+                if (response.status !== 200) {
+                    registerLog("[" + index + "] Chassi: " + chassiNumber + " - Falha de comunicação externa.")
+                } else {
+                    const data = saveResponse(jsonBody, index, chassiNumber);
+                    if (data != null) {
+                        dataList.push(data);
+                    }
+                    totalChassiFound++;
+                    document.getElementById('valueFound').innerHTML = totalChassiFound;
+                }
+                
+            } catch (e) {
+                console.log(e);
+                registerLog("[" + index + "] Chassi: " + chassiNumber + " - Não encontrado.");
             }
             const totalToProcess = document.getElementById('totalFound').textContent.split('/')[1];
-            document.getElementById('totalFound').innerHTML = index + "/" + totalToProcess;
+                document.getElementById('totalFound').innerHTML = index + "/" + totalToProcess;
+            
         }
 
         registerLog('Processamento finalizado!')
@@ -80,18 +90,10 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     function saveResponse(json, index, chassi) {
-
-        if (typeof json.saida.rt02 === 'undefined') {
-            registerLog("[" + index + "] Chassi: " + chassi + " - Não encontrado.");
-        } else if (typeof json.saida.rt02 !== undefined) {
-            const situacao = json.saida.rt02['veiculo'].situacao;
-            registerLog("[" + index + "] Chassi: " + chassi + " - Situação: " + situacao);
-            if (situacao === 'S/1 EMPLAC') {
-                return json;
-            }
-            return null;
-        } else {
-            registerLog("[" + index + "] Chassi: " + chassi + " - Erro no processamento.")
+        const situacao = json.resultado.situacao;
+        registerLog("[" + index + "] Chassi: " + chassi + " - Situação: " + situacao);
+        if (situacao === 'S/1 EMPLAC') {
+            return json;
         }
         return null;
     }
@@ -109,7 +111,6 @@ window.addEventListener('DOMContentLoaded', () => {
 })
 
 function processTextAndGeneratePdf(dataList, mainList, quantity) {
-    console.log(dataList);
     if (dataList.length > 0) {
         const textVehicle = dataList.map(function (item, index) {
             return template.create(item);

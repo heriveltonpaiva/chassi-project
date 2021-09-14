@@ -8,8 +8,8 @@ exports.reset = function () {
     document.getElementById('pdfFileName').innerHTML = ''
     //document.getElementsByName('optradio')[0].checked = true;
 
-    //document.getElementById('chassiNumber').value = '93YMAF40EHJ382783'
-    //document.getElementById('quantity').value = '2'
+    document.getElementById('chassiNumber').value = '9AD406ATPJ0007116'
+    document.getElementById('quantity').value = '2'
     document.getElementById('valueFound').innerHTML = "0"
     document.getElementById('totalFound').innerHTML = "0/0"
 }

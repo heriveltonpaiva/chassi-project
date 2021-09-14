@@ -12,7 +12,6 @@ var template = 'Marca/Modelo: {model} \n'+
                'Potência: {potency} \n'+
                'Carga cmt: {cmtCarga}  \n'+
                'Carga pbt: {pbtCarga}  \n'+
-               'Capacidade de carga: {capacityCarga}  \n'+
                'Eixos: {eixosCarga} \n\n';
 
 function replaceMe(data) {
@@ -21,30 +20,28 @@ function replaceMe(data) {
 }
 
 exports.create = function(data) {
-  const dataVehicle = getDataVehicle(data.saida.rt02['veiculo'], data.saida.rt02['carga']);
+  const dataVehicle = getDataVehicle(data.resultado);
   return replaceMe(dataVehicle);
 }
 
-function getDataVehicle(veiculo, carga){
+function getDataVehicle(veiculo){
 const vehicle = {
  "chassi": veiculo['chassi'],
- "model": veiculo['cod-marca-modelo']+" - "+veiculo['marca-modelo'],
- "type" : veiculo['cod-tipo-veiculo']+" - "+veiculo['tipo-veiculo'],
- "modelYear": veiculo['ano-modelo'],
- "factoryYear" : veiculo['ano-fabricacao'],
+ "model": veiculo['codigoMarcaModelo']+" - "+veiculo['descricaoMarcaModelo'],
+ "type" : veiculo['codigoTipoVeiculo']+" - "+veiculo['descricaoTipoVeiculo'],
+ "modelYear": veiculo['anoModelo'],
+ "factoryYear" : veiculo['anoFabricacao'],
  "potency" : veiculo['potencia'] + "cv "+veiculo['cilindradas']+" cc",
- "body": veiculo['cod-tipo-carroceria']+" - "+veiculo['tipo-carroceria'],
- "gas": veiculo['cod-combustivel']+" - "+veiculo['combustivel'],
- "especie": veiculo['cod-especie']+" - "+veiculo['especie'],
- "color": veiculo['cod-cor']+" - "+veiculo['cor'],
- "capacity": veiculo['capacidade-passageiros'],
- "motorNumber": veiculo['num-motor'],
- "cambioNumber": veiculo['num-cambio'],
- "cmtCarga": carga['cmt'],
- "pbtCarga": carga['pbt'],
- "capacityCarga": carga['capacidade-carga'],
- "eixosCarga": carga['num-eixos'],
-
+ "body": veiculo['codigoTipoCarroceria']+" - "+veiculo['descricaoTipoCarroceria'],
+ "gas": veiculo['codigoCombustivel']+" - "+veiculo['descricaoCombustivel'],
+ "especie": veiculo['codigoEspecieVeiculo']+" - "+veiculo['descricaoEspecieVeiculo'],
+ "color": veiculo['codigoCor']+" - "+veiculo['descricaoCor'],
+ "capacity": veiculo['lotacao'],
+ "motorNumber": veiculo['numeroMotor'],
+ "cambioNumber": veiculo['numeroCambio'],
+ "cmtCarga": veiculo['cmt'],
+ "pbtCarga": veiculo['pbt'],
+ "eixosCarga": veiculo['qtdEixos'],
 }
 return vehicle;
 }
