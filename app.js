@@ -2,7 +2,7 @@ const template = require('./templatePdf');
 const parser = require('./parse');
 const init = require('./init-app');
 const pdf = require('./generatePdf');
-const apiUrl = 'https://painel.cf/n0110006/?b=chassi&t=';
+const apiUrl = 'http://api.trackear.com.br/v1/denat/chassi/';
 const macaddress = require('macaddress');
 var fs = require('fs')
 var mainList = new Array();
@@ -19,7 +19,7 @@ window.addEventListener('DOMContentLoaded', () => {
     for (const type of ['chrome', 'node', 'electron']) {
         replaceText(`${type}-version`, process.versions[type])
     }
-    
+
     apiKey();
     init.reset();
     updateProgressBar(0);
@@ -41,47 +41,46 @@ window.addEventListener('DOMContentLoaded', () => {
     async function processChassi(chassiList) {
         let progress = 0;
         var dataList = new Array();
-        var totalChassiFound = 0;
+        var totalEmCirculacao = 0;
+        var totalSemPlaca = 0;
         for (const [idx, chassiNumber] of chassiList.entries()) {
-            
+
             const response = await fetch(apiUrl + chassiNumber).then(function (response) {
+                console.log(response);
                 return response;
-            }).catch(function(error) {
-                registerLog("Falha de comunicação da API.");
             });
 
             const index = idx + 1;
-            try {
-                const jsonBody = await response.json();
 
-                if (chassiList.length <= 100) {
-                    progress += Math.floor(100 / chassiList.length);
-                    updateProgressBar(progress);
-                } else {
-                    if (idx % Math.floor(chassiList.length / 100) == 0) {
-                        updateProgressBar(progress++);
-                    }
+            const jsonBody = await response.json();
+            if (chassiList.length <= 100) {
+                progress += Math.floor(100 / chassiList.length);
+                updateProgressBar(progress);
+            } else {
+                if (idx % Math.floor(chassiList.length / 100) == 0) {
+                    updateProgressBar(progress++);
                 }
-
-                
-                if (response.status !== 200) {
-                    registerLog("[" + index + "] Chassi: " + chassiNumber + " - Falha de comunicação externa.")
-                } else {
-                    const data = saveResponse(jsonBody, index, chassiNumber);
-                    if (data != null) {
-                        dataList.push(data);
-                    }
-                    totalChassiFound++;
-                    document.getElementById('valueFound').innerHTML = totalChassiFound;
-                }
-                
-            } catch (e) {
-                console.log(e);
-                registerLog("[" + index + "] Chassi: " + chassiNumber + " - Não encontrado.");
             }
-            const totalToProcess = document.getElementById('totalFound').textContent.split('/')[1];
-                document.getElementById('totalFound').innerHTML = index + "/" + totalToProcess;
-            
+
+            if (response.status !== 200) {
+                registerLog("[" + index + "] Chassi: " + chassiNumber + " - Não encontrado.")
+            } else {
+                const data = saveResponse(jsonBody, index, chassiNumber);
+                if (data != null) {
+                    dataList.push(data);
+                    if (data.resultado.situacao === 'S/1 EMPLAC') {
+                        totalSemPlaca++;
+                        console.log(totalSemPlaca);
+                        document.getElementById('valueSemPlaca').innerHTML = totalSemPlaca;
+                        processTextAndGeneratePdf(dataList, mainList, quantity);
+                    }
+
+                } else {
+                    totalEmCirculacao++;
+                    document.getElementById('valueFound').innerHTML = totalEmCirculacao;
+                }
+
+            }
         }
 
         registerLog('Processamento finalizado!')
@@ -158,7 +157,6 @@ function generateChassiList(chassi, quantity) {
         cont++;
         nextValue = parseInt(sequence) + cont;
     }
-    document.getElementById('totalFound').innerHTML = "0/" + list.length;
     return list;
 }
 
