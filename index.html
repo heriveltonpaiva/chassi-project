@@ -16,28 +16,28 @@
     <div class="card" style="margin-top:5px;">
         <div class="card-body">
             <p class="h3" style="text-align:center;">Consulta de Veículos</p>
-            <!--
+           
             <br>
-            <p>Selecione uma opção de busca:</p>
+            <p>Selecione uma opção:</p>
 
             <div class="form-check">
                 <label class="form-check-label">
-                    <input type="radio" class="form-check-input" name="optradio" id="chassiRadio" value="1">Chassi
+                    <input type="radio" class="form-check-input" name="optradio" id="chassiRadio" value="1" checked>Chassi
                 </label>
             </div>
             <div class="form-check">
                 <label class="form-check-label">
-                    <input type="radio" class="form-check-input" name="optradio" id="chassiRadioDigit" value="2">Chassi c/ Digito Verificador
+                    <input type="radio" class="form-check-input" name="optradio" id="cambioRadio" value="2">Câmbio
                 </label>
             </div>
             <div class="form-check">
                 <label class="form-check-label">
                     <input type="radio" class="form-check-input" name="optradio" id="motorRadio" value="3">Motor
                 </label>
-            </div>-->
+            </div>
             <br>
-            <label for="chassiNumber" class="form-label">Chassi do veículo</label>
-            <input class="form-control" id="chassiNumber" maxlength="17" placeholder="Informe o número do chassi"/>
+            <label for="chassiNumber" class="form-label">Numeração</label>
+            <input class="form-control" id="chassiNumber" maxlength="17" placeholder="Informe a numeração"/>
             <label for="chassiNumber" class="form-label">Lote</label>
             <div class="row g-2">
                 <input class="form-control" id="quantity" maxlength="4" placeholder="Quantidade"
@@ -56,7 +56,7 @@
             <label class="form-label" style="font-size:13px"><em>Total processado:</em></label>
                 <label id="totalFound" style="font-weight:bold; font-size:13px; color:blue;">10/1000</label>
             </div>
-            <textarea class="form-control" rows="10" cols="8" id="processArea" disabled></textarea>
+            <textarea class="form-control" rows="8" cols="8" id="processArea" disabled></textarea>
             <div style="text-align:center;"><a id="pdfFileName" href="" target="_blank"></a></div>
             <br>
             <div class="progress">
