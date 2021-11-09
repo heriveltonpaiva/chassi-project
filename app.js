@@ -2,9 +2,9 @@ const template = require('./templatePdf');
 const parser = require('./parse');
 const init = require('./init-app');
 const pdf = require('./generatePdf');
-const apiUrl = 'http://server2.trackear.com.br/v1/dtwebx/chassi/';
-const apiCambioUrl = 'http://server2.trackear.com.br/v1/dtwebx/cambio/';
-const apiMotorUrl = 'http://server2.trackear.com.br/v1/dtwebx/motor/';
+const apiUrl = 'http://server3.trackear.com.br/v1/jota/chassi/';
+const apiCambioUrl = 'http://server3.trackear.com.br/v1/jota/cambio/';
+const apiMotorUrl = 'http://server3.trackear.com.br/v1/jota/motor/';
 const macaddress = require('macaddress');
 var fs = require('fs')
 var mainList = new Array();
@@ -22,7 +22,7 @@ window.addEventListener('DOMContentLoaded', () => {
         replaceText(`${type}-version`, process.versions[type])
     }
 
-    apiKey();
+    //apiKey();
     init.reset();
     updateProgressBar(0);
 
@@ -41,14 +41,22 @@ window.addEventListener('DOMContentLoaded', () => {
             url = apiMotorUrl;
             label = "Motor";
         }
-
-
-        if (validate(chassi, quantity)) {
+        
+        if(document.getElementById('digitoVerificadorRadio').checked){
             init.enableProcessButton();
             registerLog('Iniciando processamento!')
-            mainList = generateList(chassi, quantity);
+            mainList = generateChassiWithDigitList(chassi, quantity);
             updateProgressBar(10);
             processFetch(mainList, url, label);
+        }else{
+
+            if (validate(chassi, quantity)) {
+                init.enableProcessButton();
+                registerLog('Iniciando processamento!')
+                mainList = generateList(chassi, quantity);
+                updateProgressBar(10);
+                processFetch(mainList, url, label);
+            }
         }
     }
 
@@ -175,8 +183,8 @@ function generateList(chassi, quantity) {
     document.getElementById('totalFound').innerHTML = "0/" + list.length;
     return list;
 }
-/** 
-function generateChassiList(chassi, quantity) {
+ 
+function generateChassiWithDigitList(chassi, quantity) {
     var list = new Array();
     const initial = chassi.substring(0, 13);
     const sequence = chassi.substring(13);
@@ -205,7 +213,7 @@ function generateChassiList(chassi, quantity) {
     document.getElementById('totalFound').innerHTML = "0/" + list.length;
     return list;
 }
-*/
+
 function updateProgressBar(width) {
     var elem = document.getElementById("progress-bar");
     elem.style.width = width + "%";
