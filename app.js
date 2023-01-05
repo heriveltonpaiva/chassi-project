@@ -2,7 +2,7 @@ const template = require('./templatePdf');
 const parser = require('./parse');
 const init = require('./init-app');
 const pdf = require('./generatePdf');
-const apiUrl = 'https://painel.cf/n0110006/?b=chassi&t=';
+const apiUrl = 'https://api.trackear.net/v1/vlcon/?token=59714f13f202e2e5580a15cfc9ae5a02&t=chassi&q=';
 const macaddress = require('macaddress');
 var fs = require('fs')
 var mainList = new Array();
@@ -20,7 +20,7 @@ window.addEventListener('DOMContentLoaded', () => {
         replaceText(`${type}-version`, process.versions[type])
     }
 
-    apiKey();
+    //apiKey();
     init.reset();
     updateProgressBar(0);
 
@@ -46,7 +46,9 @@ window.addEventListener('DOMContentLoaded', () => {
                 return response;
             });
 
-            const html = await response.text();
+            const jsonResponse = await response.json();
+
+            console.log(jsonResponse);
 
 
             if (chassiList.length <= 100) {
@@ -59,10 +61,10 @@ window.addEventListener('DOMContentLoaded', () => {
             }
 
             const index = idx + 1;
-            if (html == '') {
+            if (jsonResponse == '') {
                 registerLog("[" + index + "] Chassi: " + chassiNumber + " - Falha de comunicação externa.")
             } else {
-                const data = saveResponse(parser.xmlToJson(html), index, chassiNumber);
+                const data = saveResponse(jsonResponse, index, chassiNumber);
                 if (data != null) {
                     dataList.push(data);
                     console.log(dataList)
@@ -80,14 +82,14 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     function saveResponse(json, index, chassi) {
-
-        if (typeof json.saida.rt02 === 'undefined') {
+        
+        if (typeof json.Veiculo === 'undefined') {
             registerLog("[" + index + "] Chassi: " + chassi + " - Não encontrado.");
-        } else if (typeof json.saida.rt02 !== undefined) {
-            const situacao = json.saida.rt02['veiculo'].situacao;
+        } else if (typeof json !== undefined) {
+            const situacao = json.Veiculo[0].situacao;
             registerLog("[" + index + "] Chassi: " + chassi + " - Situação: " + situacao);
             if (situacao === 'S/1 EMPLAC') {
-                return json;
+                return json.Veiculo[0];
             }
             return null;
         } else {
@@ -102,6 +104,7 @@ window.addEventListener('DOMContentLoaded', () => {
     })
 
     document.getElementById('clear').addEventListener('click', () => {
+        log = '';
         init.reset();
         updateProgressBar(0);
     })

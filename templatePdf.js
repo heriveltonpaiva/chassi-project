@@ -9,11 +9,7 @@ var template = 'Marca/Modelo: {model} \n'+
                'Carroceria: {body} \n'+
                'Combustível: {gas} \n'+
                'N° de passageiro: {capacity} \n'+
-               'Potência: {potency} \n'+
-               'Carga cmt: {cmtCarga}  \n'+
-               'Carga pbt: {pbtCarga}  \n'+
-               'Capacidade de carga: {capacityCarga}  \n'+
-               'Eixos: {eixosCarga} \n\n';
+               'Potência: {potency} \n';
 
 function replaceMe(data) {
   const pattern = /{\s*(\w+?)\s*}/g;
@@ -21,30 +17,25 @@ function replaceMe(data) {
 }
 
 exports.create = function(data) {
-  const dataVehicle = getDataVehicle(data.saida.rt02['veiculo'], data.saida.rt02['carga']);
+  const dataVehicle = getDataVehicle(data);
   return replaceMe(dataVehicle);
 }
 
-function getDataVehicle(veiculo, carga){
+function getDataVehicle(veiculo){
 const vehicle = {
  "chassi": veiculo['chassi'],
- "model": veiculo['cod-marca-modelo']+" - "+veiculo['marca-modelo'],
- "type" : veiculo['cod-tipo-veiculo']+" - "+veiculo['tipo-veiculo'],
- "modelYear": veiculo['ano-modelo'],
- "factoryYear" : veiculo['ano-fabricacao'],
+ "model": veiculo['codigoMarcaModelo']+" - "+veiculo['marcaModelo'],
+ "type" : veiculo['codigoTipo']+" - "+veiculo['tipo'],
+ "modelYear": veiculo['anoModelo'],
+ "factoryYear" : veiculo['anoFabricacao'],
  "potency" : veiculo['potencia'] + "cv "+veiculo['cilindradas']+" cc",
- "body": veiculo['cod-tipo-carroceria']+" - "+veiculo['tipo-carroceria'],
- "gas": veiculo['cod-combustivel']+" - "+veiculo['combustivel'],
- "especie": veiculo['cod-especie']+" - "+veiculo['especie'],
- "color": veiculo['cod-cor']+" - "+veiculo['cor'],
- "capacity": veiculo['capacidade-passageiros'],
- "motorNumber": veiculo['num-motor'],
- "cambioNumber": veiculo['num-cambio'],
- "cmtCarga": carga['cmt'],
- "pbtCarga": carga['pbt'],
- "capacityCarga": carga['capacidade-carga'],
- "eixosCarga": carga['num-eixos'],
-
+ "body": veiculo['carroceria'],
+ "gas": veiculo['combustivel'],
+ "especie": veiculo['codigoEspecieVeiculo']+" - "+veiculo['especie'],
+ "color": veiculo['codigoCor']+" - "+veiculo['cor'],
+ "capacity": veiculo['capacidadePassageiro'],
+ "motorNumber": veiculo['motor'],
+ "cambioNumber": veiculo['cambio']
 }
 return vehicle;
 }
