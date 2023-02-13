@@ -15,8 +15,24 @@
         <div class="card-body">
             <p class="h3" style="text-align:center;">Consulta de Veículos</p>
             <br>
-            <label for="chassiNumber" class="form-label">Chassi do veículo</label>
-            <input class="form-control" id="chassiNumber" maxlength="17" placeholder="Informe o número do chassi"/>
+            <p>Selecione uma opção:</p>
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="radio" class="form-check-input" name="optradio" id="chassiRadio" value="1" checked>Chassi
+                </label>
+            </div>
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="radio" class="form-check-input" name="optradio" id="cambioRadio" value="2">Câmbio
+                </label>
+            </div>
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="radio" class="form-check-input" name="optradio" id="motorRadio" value="3">Motor
+                </label>
+            </div>
+
+
             <label for="chassiNumber" class="form-label">Lote</label>
             <div class="row g-2">
                 <input class="form-control" id="quantity" maxlength="3" placeholder="Quantidade"

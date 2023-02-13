@@ -2,12 +2,13 @@ const template = require('./templatePdf');
 const parser = require('./parse');
 const init = require('./init-app');
 const pdf = require('./generatePdf');
-const apiUrl = 'https://api.trackear.net/v1/vlcon/?token=59714f13f202e2e5580a15cfc9ae5a02&t=chassi&q=';
 const macaddress = require('macaddress');
 var fs = require('fs')
 var mainList = new Array();
+var initialList = new Array();
 var quantity;
 var log = "";
+var totalChassiFound = 0;
 
 window.addEventListener('DOMContentLoaded', () => {
 
@@ -23,32 +24,102 @@ window.addEventListener('DOMContentLoaded', () => {
     //apiKey();
     init.reset();
     updateProgressBar(0);
+   
+    function createList() {
+        const apiUrlText = document.getElementById('apiUrl').value;
 
-    function execute() {
+        const apiUrl = apiUrlText + 't=chassi&q=';
+        const apiCambioUrl = apiUrlText + 't=cambio&q=';
+        const apiMotorUrl = apiUrlText + 't=motor&q=';
+
+        log = "";
         const chassi = document.getElementById('chassiNumber').value;
         quantity = document.getElementById('quantity').value;
 
-        if (validate(chassi, quantity)) {
-            init.enableProcessButton();
-            registerLog('Iniciando processamento!')
-            mainList = generateChassiList(chassi, quantity);
-            updateProgressBar(10);
-            processChassi(mainList);
+        var url = apiUrl;
+        var label = "Chassi";
+
+        if (document.getElementById('cambioRadio').checked) {
+            url = apiCambioUrl;
+            label = "Câmbio";
+        } else if (document.getElementById('motorRadio').checked) {
+            url = apiMotorUrl;
+            label = "Motor";
         }
+
+        if (validate(chassi, quantity)) {
+            console.log("Gerando listagem prévia!!!")
+            initialList = generateList(chassi, quantity);
+            var count = 1;
+            if (document.getElementById('asc').checked) {
+                initialList = initialList.sort();
+            } else if (document.getElementById('desc').checked) {
+                initialList = initialList.reverse();
+            }
+            initialList.forEach(it => {
+                log += '[' + (count++) + '] - ' + it + '\n';
+                document.getElementById('processAreaList').value = log;
+            })
+        }
+
     }
 
-    async function processChassi(chassiList) {
+
+    function execute() {
+        const apiUrlText = document.getElementById('apiUrl').value;
+        
+        if(apiUrlText == ""){
+            registerLog('URL da Api não informada!')
+            return;
+        }
+
+        if (document.getElementById('processAreaList').value == '') {
+            registerLog("ERRO! Necessário gerar a listagem a ser processada!")
+        } else {
+
+            const apiUrl = apiUrlText + 't=chassi&q=';
+            const apiCambioUrl = apiUrlText + 't=cambio&q=';
+            const apiMotorUrl = apiUrlText + 't=motor&q=';
+
+            log = "";
+            const chassi = document.getElementById('chassiNumber').value;
+            quantity = document.getElementById('quantity').value;
+
+            var url = apiUrl;
+            var label = "Chassi";
+
+            if (document.getElementById('cambioRadio').checked) {
+                url = apiCambioUrl;
+                label = "Câmbio";
+            } else if (document.getElementById('motorRadio').checked) {
+                url = apiMotorUrl;
+                label = "Motor";
+            }
+
+
+            if (validate(chassi, quantity)) {
+                updateProgressBar(10);
+                processFetch(initialList, url, label);
+            }
+
+        }
+
+    }
+
+    async function processFetch(chassiList, apiUrl, label) {
         let progress = 0;
         var dataList = new Array();
-        var totalChassiFound = 0;
         for (const [idx, chassiNumber] of chassiList.entries()) {
-            const response = await fetch(apiUrl + chassiNumber).then(function (response) {
+            var url = apiUrl + chassiNumber;
+            const response = await fetch(url).then(function (response) {
+                console.log(response);
+                if (response.status == 404) {
+                    registerLog('Url da API incorreta!')
+                }
                 return response;
             });
 
             const jsonResponse = await response.json();
-
-            console.log(jsonResponse);
 
 
             if (chassiList.length <= 100) {
@@ -62,15 +133,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
             const index = idx + 1;
             if (jsonResponse == '') {
-                registerLog("[" + index + "] Chassi: " + chassiNumber + " - Falha de comunicação externa.")
+                registerLog("[" + index + "] " + label + ": " + chassiNumber + " - Falha de comunicação externa.")
             } else {
-                const data = saveResponse(jsonResponse, index, chassiNumber);
+                const data = saveResponse(jsonResponse, index, chassiNumber, label);
                 if (data != null) {
                     dataList.push(data);
                     console.log(dataList)
                 }
-                totalChassiFound++;
-                document.getElementById('valueFound').innerHTML = totalChassiFound;
+
             }
             const totalToProcess = document.getElementById('totalFound').textContent.split('/')[1];
             document.getElementById('totalFound').innerHTML = index + "/" + totalToProcess;
@@ -81,32 +151,36 @@ window.addEventListener('DOMContentLoaded', () => {
         updateProgressBar(100);
     }
 
-    function saveResponse(json, index, chassi) {
-        
+    function saveResponse(json, index, chassi, label) {
+
         if (typeof json.Veiculo === 'undefined') {
-            registerLog("[" + index + "] Chassi: " + chassi + " - Não encontrado.");
+            registerLog("[" + index + "] " + label + ": " + chassi + " - Não encontrado.");
         } else if (typeof json !== undefined) {
             const situacao = json.Veiculo[0].situacao;
-            registerLog("[" + index + "] Chassi: " + chassi + " - Situação: " + situacao);
+            registerLog("[" + index + "] " + label + ": " + chassi + " - Situação: " + situacao);
             if (situacao === 'S/1 EMPLAC') {
+                totalChassiFound++;
+                document.getElementById('valueFound').innerHTML = totalChassiFound;
                 return json.Veiculo[0];
             }
             return null;
         } else {
-            registerLog("[" + index + "] Chassi: " + chassi + " - Erro no processamento.")
+            registerLog("[" + index + "" + label + ": " + chassi + " - Erro no processamento.")
         }
         return null;
     }
 
 
-    document.getElementById('btnEd').addEventListener('click', () => {
+    document.getElementById('initProcess').addEventListener('click', () => {
         execute();
     })
 
     document.getElementById('clear').addEventListener('click', () => {
-        log = '';
         init.reset();
-        updateProgressBar(0);
+    })
+
+    document.getElementById('btnGenerateList').addEventListener('click', () => {
+        createList();
     })
 
 })
@@ -118,6 +192,7 @@ function processTextAndGeneratePdf(dataList, mainList, quantity) {
             return template.create(item);
         });
         const pdfName = "VEICULOS_" + mainList[0] + "_" + quantity;
+        console.log(textVehicle);
         pdf.generatePDF(textVehicle, pdfName);
         registerLog('Arquivo ' + pdfName + '.pdf gerado com sucesso!');
 
@@ -134,7 +209,35 @@ function registerLog(message) {
     document.getElementById('processArea').value = log;
 }
 
-function generateChassiList(chassi, quantity) {
+function generateList(chassi, quantity) {
+    var list = new Array();
+    var factor = 4;
+
+    if (chassi.charAt(chassi.length - 4) == '0') {
+        if (chassi.charAt(chassi.length - 3) == '0') {
+            factor = 2;
+        } else {
+            factor = 3;
+        }
+    }
+
+    const initial = chassi.substring(0, chassi.length - factor);
+    const sequence = chassi.substring(chassi.length - factor);
+
+
+    let nextValue = parseInt(sequence);
+    let cont = 0;
+
+    while (cont < quantity) {
+        list.push(initial.concat(nextValue))
+        cont++;
+        nextValue = parseInt(sequence) + cont;
+    }
+    document.getElementById('totalFound').innerHTML = "0/" + list.length;
+    return list;
+}
+
+function generateChassiWithDigitList(chassi, quantity) {
     var list = new Array();
     const initial = chassi.substring(0, 13);
     const sequence = chassi.substring(13);
@@ -178,7 +281,7 @@ function validate(chassi, quantity) {
     }
     if (!chassi) {
         validated = false;
-        registerLog('Campo: chassi não informado.')
+        registerLog('Campo: numeração não informado.')
     }
     return validated;
 }
