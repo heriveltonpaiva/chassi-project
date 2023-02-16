@@ -3,6 +3,7 @@ const parser = require('./parse');
 const init = require('./init-app');
 const pdf = require('./generatePdf');
 const macaddress = require('macaddress');
+const { contextBridge, ipcRenderer } = require('electron');
 var fs = require('fs')
 var mainList = new Array();
 var initialList = new Array();
@@ -24,7 +25,7 @@ window.addEventListener('DOMContentLoaded', () => {
     //apiKey();
     init.reset();
     updateProgressBar(0);
-   
+
     function createList() {
         const apiUrlText = document.getElementById('apiUrl').value;
 
@@ -67,8 +68,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
     function execute() {
         const apiUrlText = document.getElementById('apiUrl').value;
-        
-        if(apiUrlText == ""){
+
+        if (apiUrlText == "") {
             registerLog('URL da Api não informada!')
             return;
         }
@@ -97,6 +98,7 @@ window.addEventListener('DOMContentLoaded', () => {
             }
 
 
+
             if (validate(chassi, quantity)) {
                 updateProgressBar(10);
                 processFetch(initialList, url, label);
@@ -109,46 +111,61 @@ window.addEventListener('DOMContentLoaded', () => {
     async function processFetch(chassiList, apiUrl, label) {
         let progress = 0;
         var dataList = new Array();
+        var blockFlow = true;
         for (const [idx, chassiNumber] of chassiList.entries()) {
-            var url = apiUrl + chassiNumber;
-            const response = await fetch(url).then(function (response) {
-                console.log(response);
-                if (response.status == 404) {
-                    registerLog('Url da API incorreta!')
+            console.log("IDX de parada: "+idx + " IDX flag no HTML:"+document.getElementById("idxStep").value)
+            if (document.getElementById("idxStep").value == '' || document.getElementById("idxStep").value > idx) {
+
+                //quando pausar e parar o processo
+                if (document.getElementById('step').value == "pause" || document.getElementById('step').value == "stop") {
+                    console.log("Processamento parado! Próximo: " + chassiNumber);
+                    registerLog("Processamento encerrado!")
+                    document.getElementById("chassiStep").value = chassiNumber;
+                    document.getElementById("idxStep").value = idx;
+
+                    //quando iniciar ou continuar
+                } else if (document.getElementById('step').value == "start" || document.getElementById('step').value == "continue") {
+                    var url = apiUrl + chassiNumber;
+                    const response = await fetch(url).then(function (response) {
+                        console.log(response);
+                        if (response.status == 404) {
+                            registerLog('Url da API incorreta!')
+                        }
+                        return response;
+                    });
+
+                    const jsonResponse = await response.json();
+
+
+                    if (chassiList.length <= 100) {
+                        progress += Math.floor(100 / chassiList.length);
+                        updateProgressBar(progress);
+                    } else {
+                        if (idx % Math.floor(chassiList.length / 100) == 0) {
+                            updateProgressBar(progress++);
+                        }
+                    }
+
+                    const index = idx + 1;
+                    if (jsonResponse == '') {
+                        registerLog("[" + index + "] " + label + ": " + chassiNumber + " - Falha de comunicação externa.")
+                    } else {
+                        const data = saveResponse(jsonResponse, index, chassiNumber, label);
+                        if (data != null) {
+                            dataList.push(data);
+                            console.log(dataList)
+                        }
+
+                    }
+                    const totalToProcess = document.getElementById('totalFound').textContent.split('/')[1];
+                    document.getElementById('totalFound').innerHTML = index + "/" + totalToProcess;
                 }
-                return response;
-            });
 
-            const jsonResponse = await response.json();
-
-
-            if (chassiList.length <= 100) {
-                progress += Math.floor(100 / chassiList.length);
-                updateProgressBar(progress);
-            } else {
-                if (idx % Math.floor(chassiList.length / 100) == 0) {
-                    updateProgressBar(progress++);
-                }
+                //registerLog('Processamento finalizado!')
+                processTextAndGeneratePdf(dataList, mainList, quantity);
+                updateProgressBar(100);
             }
-
-            const index = idx + 1;
-            if (jsonResponse == '') {
-                registerLog("[" + index + "] " + label + ": " + chassiNumber + " - Falha de comunicação externa.")
-            } else {
-                const data = saveResponse(jsonResponse, index, chassiNumber, label);
-                if (data != null) {
-                    dataList.push(data);
-                    console.log(dataList)
-                }
-
-            }
-            const totalToProcess = document.getElementById('totalFound').textContent.split('/')[1];
-            document.getElementById('totalFound').innerHTML = index + "/" + totalToProcess;
         }
-
-        registerLog('Processamento finalizado!')
-        processTextAndGeneratePdf(dataList, mainList, quantity);
-        updateProgressBar(100);
     }
 
     function saveResponse(json, index, chassi, label) {
@@ -175,7 +192,59 @@ window.addEventListener('DOMContentLoaded', () => {
         execute();
     })
 
+    document.getElementById('pauseProcess').addEventListener('click', () => {
+        if (document.getElementById('step').value == "pause" || document.getElementById('step').value == "stop") {
+            registerLog("ERRO! O processo já está pausado ou foi finalizado!")
+        } else {
+            document.getElementById("step").value = "pause";
+        }
+    })
+
+    document.getElementById('continueProcess').addEventListener('click', () => {
+
+
+        if (document.getElementById('step').value == "continue" || document.getElementById('step').value == "stop") {
+            registerLog("ERRO! O processo já está em andamento ou foi finalizado!")
+        } else {
+            document.getElementById("step").value = "continue";
+
+
+            const apiUrlText = document.getElementById('apiUrl').value;
+
+            const apiUrl = apiUrlText + 't=chassi&q=';
+            const apiCambioUrl = apiUrlText + 't=cambio&q=';
+            const apiMotorUrl = apiUrlText + 't=motor&q=';
+
+            const chassi = document.getElementById('chassiNumber').value;
+            quantity = document.getElementById('quantity').value;
+
+            var url = apiUrl;
+            var label = "Chassi";
+
+            if (document.getElementById('cambioRadio').checked) {
+                url = apiCambioUrl;
+                label = "Câmbio";
+            } else if (document.getElementById('motorRadio').checked) {
+                url = apiMotorUrl;
+                label = "Motor";
+            }
+
+
+
+            processFetch(initialList, url, label)
+        }
+    })
+
+    document.getElementById('stopProcess').addEventListener('click', () => {
+        if (document.getElementById('step').value == "stop") {
+            registerLog("ERRO! O processo já está parado!")
+        } else {
+            document.getElementById("step").value = "stop";
+        }
+    })
+
     document.getElementById('clear').addEventListener('click', () => {
+        console.log("Clear button!")
         init.reset();
     })
 
@@ -191,10 +260,10 @@ function processTextAndGeneratePdf(dataList, mainList, quantity) {
         const textVehicle = dataList.map(function (item, index) {
             return template.create(item);
         });
-        const pdfName = "VEICULOS_" + mainList[0] + "_" + quantity;
+        const pdfName = "VEICULOS_" + dataList[0].chassi + "_" + quantity;
         console.log(textVehicle);
         pdf.generatePDF(textVehicle, pdfName);
-        registerLog('Arquivo ' + pdfName + '.pdf gerado com sucesso!');
+        // registerLog('Arquivo ' + pdfName + '.pdf gerado com sucesso!');
 
         init.showProcessedWithPdf();
     } else {

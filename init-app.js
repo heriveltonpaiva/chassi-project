@@ -13,36 +13,47 @@ exports.reset = function () {
     document.getElementById('quantity').value = '10'
     document.getElementById('valueFound').innerHTML = "0"
     document.getElementById('totalFound').innerHTML = "0/0"
-
-    document.getElementById("initProcess").disabled = false;
-    document.getElementById("pauseProcess").disabled  = true;
-    document.getElementById("stopProcess").disabled  = true;
-    document.getElementById("continueProcess").disabled  = true;
 }
 
 exports.enableProcessButton = function() {
-    document.getElementById("initProcess").disabled = true;
-    document.getElementById("pauseProcess").disabled  = false;
-    document.getElementById("stopProcess").disabled  = false;
-    document.getElementById("continueProcess").disabled  = true;
     document.getElementById("clear").style.display = "block";
     document.getElementById('pdfFileName').innerHTML = ''
 }
 
 exports.showProcessedWithPdf = function() {
     document.getElementById("clear").style.display = "block";
-    document.getElementById("initProcess").style.display = "none";
-
-    document.getElementById("initProcess").disabled = false;
-    document.getElementById("pauseProcess").disabled  = true;
-    document.getElementById("stopProcess").disabled  = true;
-    document.getElementById("continueProcess").disabled  = true;
 }
-
 exports.showProcessedWithoutResult = function() {
     document.getElementById("clear").style.display = "block";
-    document.getElementById("initProcess").disabled = false;
-    document.getElementById("pauseProcess").disabled  = true;
-    document.getElementById("stopProcess").disabled  = true;
-    document.getElementById("continueProcess").disabled  = true;
 }
+/** 
+//Process control
+exports.pauseOrStop = function() {
+    document.getElementById("initProcess").style.display = "none";
+    document.getElementById("continueProcess").style.display = "none";
+    document.getElementById("pauseProcess").style.display = "block";
+    document.getElementById("stopProcess").style.display = "block";
+}
+
+exports.continueOrStop = function() {
+    document.getElementById("initProcess").style.display = "none";
+    document.getElementById("pauseProcess").style.display = "block";
+    document.getElementById("continueProcess").style.display = "block";
+    document.getElementById("stopProcess").style.display = "block";
+}
+
+exports.start = function() {
+    document.getElementById("initProcess").style.display = "block";
+    document.getElementById("pauseProcess").style.display = "none";
+    document.getElementById("continueProcess").style.display = "none";
+    document.getElementById("stopProcess").style.display = "none";
+}
+
+exports.endProcess = function() {
+    document.getElementById("initProcess").style.display = "none";
+    document.getElementById("pauseProcess").style.display = "none";
+    document.getElementById("continueProcess").style.display = "none";
+    document.getElementById("stopProcess").style.display = "none";
+}
+*/
+

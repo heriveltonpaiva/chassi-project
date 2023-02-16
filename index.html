@@ -88,7 +88,7 @@
         <button class="tablinks" onclick="openCity(event, 'tab1')" id="defaultOpen">Gerador</button>
         <button class="tablinks" onclick="openCity(event, 'tab2')">Listagem</button>
         <button class="tablinks" onclick="openCity(event, 'tab3')">Processamento</button>
-        <button class="tablinks" onclick="openCity(event, 'tab4')">Relatórios</button>
+       <!-- <button class="tablinks" onclick="openCity(event, 'tab4')">Relatórios</button>-->
     </div>
 
     <!-- DIV DE CONSULTA DE VEICULOS-->
@@ -140,11 +140,12 @@
                             Gerar Listagem
                         </button>
 
-                        <button type="button" class="btn btn-danger" id="clear"
-                            style="margin-right:5px; margin-left:5px;">
+                        <button type="button" class="btn btn-danger" id="clear" 
+                            style="margin-right:5px; margin-left:5px; display:none;">
                             Limpar Listagem
                         </button>
                     </div>
+    
                     <br><br>
                     <label for="apiUrl" class="form-label">Endereço da API (informar apenas a parte
                         vermelha)</label><br>
@@ -170,7 +171,9 @@
         <!-- DIV DE PROCESSAMENTO-->
         <div class="tabcontent" id="tab3" style="border:0px;">
             <div class="card" style="margin-top:5px;">
-
+                <input id="step" type="hidden" value="start"/>
+                <input id="chassiStep" type="hidden" value=""/>
+                <input id="idxStep" type="hidden" value=""/>
                 <div class="card-body">
                     <label for="processButton" class="form-label">Ações</label>
                     <div style="text-align: center;">
@@ -178,11 +181,11 @@
                             Iniciar
                         </button>
                         <button type="button" class="btn btn-warning" id="pauseProcess"
-                            style="margin-right:5px; margin-left:5px;">
+                            style="margin-right:5px; margin-left:5px; display:none;">
                             Pausar
                         </button>
                         <button type="button" class="btn btn-success" id="continueProcess"
-                            style="margin-right:5px; margin-left:5px;">
+                            style="margin-right:5px; margin-left:5px; display:none;">
                             Continuar
                         </button>
                         <button type="button" class="btn btn-danger" id="stopProcess"

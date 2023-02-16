@@ -22,7 +22,7 @@ exports.create = function(data) {
 }
 
 function getDataVehicle(veiculo){
-const vehicle = {
+const vehicle = { 
  "chassi": veiculo['chassi'],
  "model": veiculo['codigoMarcaModelo']+" - "+veiculo['marcaModelo'],
  "type" : veiculo['codigoTipo']+" - "+veiculo['tipo'],
