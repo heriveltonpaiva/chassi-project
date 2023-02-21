@@ -7,7 +7,6 @@ var logTextArea = '';
 
 exports.createTemporaryList = function () {
     reset();
-
     const quantity = document.getElementById('quantity').value;
     const numberValue = document.getElementById('chassiNumber').value;
 
@@ -100,6 +99,6 @@ validate = function (numberValue, quantity) {
 }
 
 reset = function () {
-    logTextArea = "";
+    logTextArea = '';
     count = 1;
 }

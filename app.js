@@ -24,22 +24,26 @@ window.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('initProcess').addEventListener('click', () => {
         processStart.start();
+        init.startProcess();
     })
 
     document.getElementById('pauseProcess').addEventListener('click', () => {
         processPause.pause();
+        init.pauseProcess();
     })
 
     document.getElementById('stopProcess').addEventListener('click', () => {
         processStop.stop();
+        init.stopProcess();
     })
 
     document.getElementById('clear').addEventListener('click', () => {
-        init.reset();
+        init.newSearch();
     })
 
     document.getElementById('btnGenerateList').addEventListener('click', () => {
         creator.createTemporaryList();
+        init.startSearch();
     })
     document.getElementById('openReports').addEventListener('click', () => {
         shell.openExternal(currentPath + '/resources/')

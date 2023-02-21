@@ -62,13 +62,11 @@ exports.processTextAndGeneratePdf = function (dataList, quantity) {
         pdf.generatePDF(textVehicle, pdfName, brand);
         registerLog('Arquivo ' + pdfName + '.pdf gerado com sucesso!');
 
-        init.showProcessedWithPdf();
-
         const pdfSearchName = "RELATORIO_BUSCA_" + dataList[0].chassi + "_" + dataList.length;
         pdf.generateReportPDF(generalList, pdfSearchName);
 
     } else {
-        init.showProcessedWithoutResult();
+        init.completeProcess();
     }
 }
 

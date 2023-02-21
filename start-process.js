@@ -1,4 +1,5 @@
 const creator = require('./create-list');
+const init = require('./init-app');
 const responseProcess = require('./response-process');
 var logTextArea = '';
 var index = 0;
@@ -35,7 +36,8 @@ async function processFetch(list, label) {
             break;
         }else if(document.getElementById('actionProcess').value === 'stop'){
             updateProgressBar(100)
-            registerLog("Processamento encerrado manualmente!");
+            updateProgressBar(100)
+            init.completeProcess();
             break;
         }
 
@@ -60,8 +62,8 @@ async function processFetch(list, label) {
             }
         }
         if(idx == listLength){
-            registerLog('Processamento finalizado!')
             updateProgressBar(100)
+            init.completeProcess();
         }
 
     }

@@ -13,45 +13,63 @@ exports.reset = function () {
     document.getElementById('totalFound').innerHTML = "0/0"
 }
 
-exports.enableProcessButton = function() {
-    document.getElementById("clear").style.display = "none";
+exports.newSearch = function () {
+    document.getElementById('chassiNumber').value = '';
+    document.getElementById('quantity').value = '';
+    document.getElementById('processArea').value = ''
+    document.getElementById('processAreaList').value = '';
     document.getElementById('pdfFileName').innerHTML = ''
+    document.getElementById('pdfFileReportName').innerHTML = '';
+    document.getElementById('valueFound').innerHTML = "0"
+    document.getElementById('totalFound').innerHTML = "0/0"
+    document.getElementById("initProcess").disabled = true;
+    document.getElementById("pauseProcess").disabled = true;
+    document.getElementById("stopProcess").disabled = true;
+    document.getElementById("chassiNumber").disabled = false;
+    document.getElementById("quantity").disabled = false;
+    document.getElementById("btnGenerateList").disabled = false;
+    document.getElementById('nextPosition').innerHTML = ' - ';
+    document.getElementById('nextNumber').innerHTML = ' - ';
+    updateProgressBar(0);
 }
 
-exports.showProcessedWithPdf = function() {
-    document.getElementById("clear").style.display = "none";
-}
-exports.showProcessedWithoutResult = function() {
-    document.getElementById("clear").style.display = "none";
-}
-/** 
-//Process control
-exports.pauseOrStop = function() {
-    document.getElementById("initProcess").style.display = "none";
-    document.getElementById("continueProcess").style.display = "none";
-    document.getElementById("pauseProcess").style.display = "block";
-    document.getElementById("stopProcess").style.display = "block";
+exports.startSearch = function () {
+    document.getElementById("initProcess").disabled = false;
+    document.getElementById("pauseProcess").disabled = true;
+    document.getElementById("stopProcess").disabled = true;
+    document.getElementById("chassiNumber").disabled = true;
+    document.getElementById("quantity").disabled = true;
+    document.getElementById("btnGenerateList").disabled = true;
+    updateProgressBar(0);
 }
 
-exports.continueOrStop = function() {
-    document.getElementById("initProcess").style.display = "none";
-    document.getElementById("pauseProcess").style.display = "block";
-    document.getElementById("continueProcess").style.display = "block";
-    document.getElementById("stopProcess").style.display = "block";
+exports.startProcess = function () {
+    document.getElementById("initProcess").disabled = true;
+    document.getElementById("pauseProcess").disabled = false;
+    document.getElementById("stopProcess").disabled = false;
 }
 
-exports.start = function() {
-    document.getElementById("initProcess").style.display = "block";
-    document.getElementById("pauseProcess").style.display = "none";
-    document.getElementById("continueProcess").style.display = "none";
-    document.getElementById("stopProcess").style.display = "none";
+exports.pauseProcess = function () {
+    document.getElementById("pauseProcess").disabled = false;
+    document.getElementById("stopProcess").disabled = false;
 }
 
-exports.endProcess = function() {
-    document.getElementById("initProcess").style.display = "none";
-    document.getElementById("pauseProcess").style.display = "none";
-    document.getElementById("continueProcess").style.display = "none";
-    document.getElementById("stopProcess").style.display = "none";
+exports.stopProcess = function () {
+    document.getElementById("initProcess").disabled = true;
+    document.getElementById("pauseProcess").disabled = true;
+    document.getElementById("stopProcess").disabled = true;
+    updateProgressBar(100);
 }
-*/
 
+exports.completeProcess = function () {
+    document.getElementById("initProcess").disabled = true;
+    document.getElementById("pauseProcess").disabled = true;
+    document.getElementById("stopProcess").disabled = true;
+    updateProgressBar(100);
+}
+
+function updateProgressBar(width) {
+    var elem = document.getElementById("progress-bar");
+    elem.style.width = width + "%";
+    elem.innerHTML = width + "%";
+}
