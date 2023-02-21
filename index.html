@@ -85,10 +85,10 @@
 
     </script>
     <div class="tab">
-        <button class="tablinks" onclick="openCity(event, 'tab1')" id="defaultOpen">Gerador</button>
+        <button class="tablinks" onclick="openCity(event, 'tab1')">Gerador</button>
         <button class="tablinks" onclick="openCity(event, 'tab2')">Listagem</button>
-        <button class="tablinks" onclick="openCity(event, 'tab3')">Processamento</button>
-       <!-- <button class="tablinks" onclick="openCity(event, 'tab4')">Relatórios</button>-->
+        <button class="tablinks" onclick="openCity(event, 'tab3')"  id="defaultOpen">Processamento</button>
+        <button class="tablinks" onclick="openCity(event, 'tab4')">Relatórios</button>
     </div>
 
     <!-- DIV DE CONSULTA DE VEICULOS-->
@@ -140,12 +140,12 @@
                             Gerar Listagem
                         </button>
 
-                        <button type="button" class="btn btn-danger" id="clear" 
+                        <button type="button" class="btn btn-danger" id="clear"
                             style="margin-right:5px; margin-left:5px; display:none;">
                             Limpar Listagem
                         </button>
                     </div>
-    
+
                     <br><br>
                     <label for="apiUrl" class="form-label">Endereço da API (informar apenas a parte
                         vermelha)</label><br>
@@ -162,7 +162,7 @@
             <div class="card" style="margin-top:5px;">
                 <div class="card-body">
                     <label for="processAreaList" class="form-label">Listagem Gerada</label>
-                    <textarea class="form-control" rows="25" cols="8" id="processAreaList"></textarea>
+                    <textarea class="form-control" rows="25" cols="8" id="processAreaList" disabled></textarea>
                 </div>
             </div>
         </div>
@@ -171,12 +171,11 @@
         <!-- DIV DE PROCESSAMENTO-->
         <div class="tabcontent" id="tab3" style="border:0px;">
             <div class="card" style="margin-top:5px;">
-                <input id="step" type="hidden" value="start"/>
-                <input id="chassiStep" type="hidden" value=""/>
-                <input id="idxStep" type="hidden" value=""/>
+                <input id="step" type="hidden" value="start" />
+                <input id="chassiStep" type="hidden" value="" />
+                <input id="idxStep" type="hidden" value="" />
+                <!--
                 <div class="card-body">
-                    <label for="processButton" class="form-label">Ações</label>
-                    <div style="text-align: center;">
                         <button type="button" class="btn btn-primary init" id="initProcess">
                             Iniciar
                         </button>
@@ -189,14 +188,24 @@
                             Continuar
                         </button>
                         <button type="button" class="btn btn-danger" id="stopProcess"
-                            style="margin-right:5px; margin-left:5px;">
+                            style="margin-right:5px; margin-left:5px;display:none;">
                             Parar
                         </button>
+                    </div>-->
+                    <h4 class="form-label" style="text-align:center; font-weight: bold; margin:10px;" id="label"></h4>    
+                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar com grupos de botões"
+                    style="margin-left:20%; margin-right:20%;">
+                    <div class="btn-group" role="group" style="height:50px; width:100%;">
+                        <button type="button" class="btn btn-primary" id="initProcess">Iniciar</button>
+                        <button type="button" class="btn btn-warning" id="pauseProcess">Pausar</button>
+                        <button type="button" class="btn btn-danger" id="stopProcess">Parar</button>
                     </div>
+                    <input id="actionProcess" type="hidden" value="start" />
                 </div>
                 <div class="card-body">
                     <label for="processArea" class="form-label">Acompanhamento</label>
                     <div style="float:right;">
+                        
                         <label class="form-label" style="font-size:13px"><em>Total encontrado:</em></label>
                         <label id="valueFound" style="font-weight:bold; font-size:13px; color:blue;">1000</label>
                         <label class="form-label" style="font-size:13px"><em>Total processado:</em></label>
@@ -209,6 +218,12 @@
                         <div id="progress-bar" class="progress-bar" role="progressbar">0%</div>
                     </div>
                     <br>
+                    <div style="text-align:center;">
+                    <label class="form-label" style="font-size:12px;"><em>Último Processado:</em></label>
+                        <label id="nextNumber" style="font-weight:bold; font-size:12px; color:blue;"> - </label>
+                        <label class="form-label" style="font-size:12px;"><em>Posição:</em></label>
+                        <label id="nextPosition" style="font-weight:bold; font-size:12px; color:blue;">-</label>
+                    </div>    
                 </div>
             </div>
         </div>
@@ -219,6 +234,21 @@
             <div class="card" style="margin-top:5px;">
                 <div class="card-body">
                     <label for="reportList" class="form-label">Relatórios Gerados</label>
+
+                    <ul id="myUL">
+                        <li><span class="folder">2023</span>
+                            <ul class="nested">
+                                <li>Water</li>
+                                <li>Coffee</li>
+                            </ul>
+                        </li>
+                        <li><span class="folder">2022</span>
+                            <ul class="nested">
+                                <li>Water</li>
+                                <li>Coffee</li>
+                            </ul>
+                        </li>
+                    </ul>
 
                 </div>
             </div>

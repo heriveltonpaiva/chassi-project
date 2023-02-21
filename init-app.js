@@ -9,22 +9,22 @@ exports.reset = function () {
     document.getElementById('pdfFileName').innerHTML = ''
     //document.getElementsByName('optradio')[0].checked = true;
     document.getElementById('apiUrl').value ="https://api.trackear.net/v1/vlcon/?token=40ca7bee3af47e25cb85959f5faca16f&";
-    document.getElementById('chassiNumber').value = '93ZM2ATH0E8816525'
-    document.getElementById('quantity').value = '10'
+    document.getElementById('chassiNumber').value = '93ZM2ATH0E8816525';
+    document.getElementById('quantity').value = '10';
     document.getElementById('valueFound').innerHTML = "0"
     document.getElementById('totalFound').innerHTML = "0/0"
 }
 
 exports.enableProcessButton = function() {
-    document.getElementById("clear").style.display = "block";
+    document.getElementById("clear").style.display = "none";
     document.getElementById('pdfFileName').innerHTML = ''
 }
 
 exports.showProcessedWithPdf = function() {
-    document.getElementById("clear").style.display = "block";
+    document.getElementById("clear").style.display = "none";
 }
 exports.showProcessedWithoutResult = function() {
-    document.getElementById("clear").style.display = "block";
+    document.getElementById("clear").style.display = "none";
 }
 /** 
 //Process control

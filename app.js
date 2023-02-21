@@ -1,9 +1,12 @@
 const template = require('./templatePdf');
 const parser = require('./parse');
 const init = require('./init-app');
+const creator = require('./create-list');
+const processStart = require('./start-process');
+const processPause = require('./pause-process');
+const processStop = require('./stop-process');
 const pdf = require('./generatePdf');
 const macaddress = require('macaddress');
-const { contextBridge, ipcRenderer } = require('electron');
 var fs = require('fs')
 var mainList = new Array();
 var initialList = new Array();
@@ -23,6 +26,9 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     //apiKey();
+    //pasta por marca chevrolet, iveco, fiat. 
+    //colocar limite de intervalo entre as consultas 
+
     init.reset();
     updateProgressBar(0);
 
@@ -189,17 +195,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
     document.getElementById('initProcess').addEventListener('click', () => {
-        execute();
+        processStart.start();
     })
 
     document.getElementById('pauseProcess').addEventListener('click', () => {
-        if (document.getElementById('step').value == "pause" || document.getElementById('step').value == "stop") {
-            registerLog("ERRO! O processo já está pausado ou foi finalizado!")
-        } else {
-            document.getElementById("step").value = "pause";
-        }
+        processPause.pause();
     })
 
+    /*
     document.getElementById('continueProcess').addEventListener('click', () => {
 
 
@@ -234,13 +237,9 @@ window.addEventListener('DOMContentLoaded', () => {
             processFetch(initialList, url, label)
         }
     })
-
+*/
     document.getElementById('stopProcess').addEventListener('click', () => {
-        if (document.getElementById('step').value == "stop") {
-            registerLog("ERRO! O processo já está parado!")
-        } else {
-            document.getElementById("step").value = "stop";
-        }
+        processStop.stop();
     })
 
     document.getElementById('clear').addEventListener('click', () => {
@@ -249,7 +248,7 @@ window.addEventListener('DOMContentLoaded', () => {
     })
 
     document.getElementById('btnGenerateList').addEventListener('click', () => {
-        createList();
+        creator.createTemporaryList();
     })
 
 })
