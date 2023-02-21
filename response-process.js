@@ -1,11 +1,10 @@
 const init = require('./init-app');
 const template = require('./templatePdf');
 const pdf = require('./generatePdf');
-
+var generalList = new Array
 
 var totalItemFound = 0;
 var log = '';
-
 
 exports.createResponse = function (dataList, jsonResponse, index, label, valueNumber) {
 
@@ -30,9 +29,11 @@ exports.createResponse = function (dataList, jsonResponse, index, label, valueNu
 saveResponse = function (json, index, numberValue, label) {
     if (typeof json.Veiculo === 'undefined') {
         registerLog("[" + index + "] " + label + ": " + numberValue + " - Não encontrado.");
+        generalList.push("[" + index + "] " + label + ": " + numberValue + " - Não encontrado."+" \n")
     } else if (typeof json !== undefined) {
         const situacao = json.Veiculo[0].situacao;
         registerLog("[" + index + "] " + label + ": " + numberValue + " - Situação: " + situacao);
+        generalList.push("[" + index + "] " + label + ": " + numberValue + " - Situação: " + situacao+" \n")
         if (situacao === 'S/1 EMPLAC') {
             totalItemFound++;
             document.getElementById('valueFound').innerHTML = totalItemFound;
@@ -40,6 +41,7 @@ saveResponse = function (json, index, numberValue, label) {
         }
         return null;
     } else {
+        generalList.push("[" + index + "" + label + ": " + numberValue + " - Erro no processamento."+" \n")
         registerLog("[" + index + "" + label + ": " + numberValue + " - Erro no processamento.")
     }
     return null;
@@ -47,18 +49,24 @@ saveResponse = function (json, index, numberValue, label) {
 }
 
 
-exports.processTextAndGeneratePdf = function(dataList, quantity) {
-    console.log(dataList);
+exports.processTextAndGeneratePdf = function (dataList, quantity) {
+    var brand = '';
+
     if (dataList.length > 0) {
         const textVehicle = dataList.map(function (item, index) {
+            brand = item['marcaModelo'].split("/")[0];
             return template.create(item);
         });
-        const pdfName = "VEICULOS_" + dataList[0].chassi + "_" + quantity;
-        console.log(textVehicle);
-        pdf.generatePDF(textVehicle, pdfName);
+
+        const pdfName = "VEICULOS_" + brand + "_" + dataList[0].chassi + "_" + dataList.length;
+        pdf.generatePDF(textVehicle, pdfName, brand);
         registerLog('Arquivo ' + pdfName + '.pdf gerado com sucesso!');
 
         init.showProcessedWithPdf();
+
+        const pdfSearchName = "RELATORIO_BUSCA_" + dataList[0].chassi + "_" + dataList.length;
+        pdf.generateReportPDF(generalList, pdfSearchName);
+
     } else {
         init.showProcessedWithoutResult();
     }

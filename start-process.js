@@ -9,7 +9,7 @@ exports.start = function () {
     if (isListGenerated) {
         registerLog("ERRO! Necessário gerar a listagem a ser processada!")
     } else {
-        var label = "Chassi";
+        var label = document.getElementById('label').innerHTML.split("por")[1];
         var list = creator.createTemporaryList();
         processFetch(list, label);
     }
@@ -27,8 +27,9 @@ async function processFetch(list, label) {
     const listLength = list.length;
 
     for (const [idx, valueNumber] of list.entries()) {
-        var url = apiUrl + valueNumber;
 
+        var url = apiUrl + valueNumber;
+        console.log("Chamando API:"+url);
         if(document.getElementById('actionProcess').value === 'pause'){
             registerLog('Processamento pausado!')
             break;

@@ -4,10 +4,8 @@ exports.reset = function () {
     document.getElementById('quantity').value = ''
     document.getElementById('processArea').value = ''
     document.getElementById('processAreaList').value = '';
-    //document.getElementById("clear").style.display = "none";
     document.getElementById("btnGenerateList").style.display = "block";
     document.getElementById('pdfFileName').innerHTML = ''
-    //document.getElementsByName('optradio')[0].checked = true;
     document.getElementById('apiUrl').value ="https://api.trackear.net/v1/vlcon/?token=40ca7bee3af47e25cb85959f5faca16f&";
     document.getElementById('chassiNumber').value = '93ZM2ATH0E8816525';
     document.getElementById('quantity').value = '10';

@@ -9,7 +9,7 @@ var template = 'Marca/Modelo: {model} \n'+
                'Carroceria: {body} \n'+
                'Combustível: {gas} \n'+
                'N° de passageiro: {capacity} \n'+
-               'Potência: {potency} \n';
+               'Potência: {potency} \n \n';
 
 function replaceMe(data) {
   const pattern = /{\s*(\w+?)\s*}/g;

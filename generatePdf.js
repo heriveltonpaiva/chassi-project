@@ -8,12 +8,12 @@ exports.openPdf = function () {
     window.open(docLocation, "resizeable,scrollbar");
 }
 
-exports.generatePDF = function (textList, pdfFileName) {
-    
-    createDirectory(currentPath + '/resources/2023')
+exports.generatePDF = function (textList, pdfFileName, brand) {
+    var path = currentPath + '/resources/' + brand + "/";
+    createDirectory(path)
 
     const doc = new jsPDF();
-    doc.setFontSize(10);
+    doc.setFontSize(12);
     let totalElementPage = 4;
     let cont = 0;
     let totalList = 0;
@@ -31,13 +31,49 @@ exports.generatePDF = function (textList, pdfFileName) {
         if (cont == 0 && totalList < textList.length - 1) {
             doc.addPage()
         }
+
         totalList++;
     });
 
-    doc.save(currentPath + '/resources/2023/' + pdfFileName + ".pdf");
-    document.getElementById('pdfFileName').href = currentPath + '/resources/' + pdfFileName + '.pdf';
-    document.getElementById('pdfFileName').innerHTML = 'Baixar arquivo ' + pdfFileName + '.pdf';
+    doc.save(path + pdfFileName + ".pdf");
+    document.getElementById('pdfFileName').href = path + pdfFileName + '.pdf';
+    document.getElementById('pdfFileName').innerHTML = 'Baixar arquivo ' + brand + "/" + pdfFileName + '.pdf';
 }
+
+
+exports.generateReportPDF = function (textList, pdfFileName) {
+    var path = currentPath + '/resources/relatorios/';
+    createDirectory(path)
+
+    const doc = new jsPDF();
+    doc.setFontSize(12);
+    let totalElementPage = 50;
+    let cont = 0;
+    let totalList = 0;
+    var textPage = "";
+
+    textList.forEach(function (element) {
+        textPage += element;
+        if (totalElementPage - 1 == cont || totalList == textList.length - 1) {
+            doc.text(textPage, 15, 15);
+            cont = 0;
+            textPage = "";
+        } else {
+            cont++;
+        }
+        if (cont == 0 && totalList < textList.length - 1) {
+            doc.addPage()
+        }
+
+        totalList++;
+    });
+
+    doc.save(path + pdfFileName + ".pdf");
+    document.getElementById('pdfFileReportName').href = path + pdfFileName + '.pdf';
+    document.getElementById('pdfFileReportName').innerHTML = 'Baixar arquivo relatorios/' + pdfFileName + '.pdf';
+}
+
+
 
 createDirectory = function (path) {
     try {
@@ -50,6 +86,10 @@ createDirectory = function (path) {
                 }
             });
         }
+
+        fs.readdirSync(currentPath + '/resources/', { withFileTypes: true })
+            .filter(item => !item.isDirectory())
+            .map(item => console.log(item.name))
     } catch (err) {
         console.error(err);
     }
