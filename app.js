@@ -42,7 +42,7 @@ window.addEventListener('DOMContentLoaded', () => {
     })
 
     document.getElementById('btnGenerateList').addEventListener('click', () => {
-        creator.createTemporaryList();
+        creator.createTemporaryList(true);
         init.startSearch();
     })
     document.getElementById('openReports').addEventListener('click', () => {

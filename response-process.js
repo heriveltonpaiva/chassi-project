@@ -6,34 +6,45 @@ var generalList = new Array
 var totalItemFound = 0;
 var log = '';
 
+exports.clearConsoleLog = function(){
+    log = '';
+    totalItemFound = 0;
+}
+
+exports.clearCountProcess = function(){
+    log = '';
+    document.getElementById('countProcess').value = 0;
+}
+
 exports.createResponse = function (dataList, jsonResponse, index, label, valueNumber) {
+    var countContinue = parseInt(document.getElementById('countProcess').value)+1;
+    document.getElementById('countProcess').value = countContinue;
 
     if (jsonResponse == '') {
-        registerLog("[" + index + "] " + label + ": " + valueNumber + " - Falha de comunicação externa.")
+        registerLog("[" + countContinue + "] " + label + ": " + valueNumber + " - Falha de comunicação externa.")
     } else {
-        const data = saveResponse(jsonResponse, index, valueNumber, label);
+        const data = saveResponse(jsonResponse, countContinue, valueNumber, label);
         if (data != null) {
             dataList.push(data);
-            console.log(dataList)
         }
 
     }
     const totalToProcess = document.getElementById('totalFound').textContent.split('/')[1];
-    document.getElementById('totalFound').innerHTML = index + "/" + totalToProcess;
-    document.getElementById('nextPosition').innerHTML = index;
+    document.getElementById('totalFound').innerHTML = countContinue + "/" + totalToProcess;
+    document.getElementById('nextPosition').innerHTML = countContinue;
     document.getElementById('nextNumber').innerHTML = valueNumber;
 }
 
 
 
-saveResponse = function (json, index, numberValue, label) {
+saveResponse = function (json, countContinue, numberValue, label) {
     if (typeof json.Veiculo === 'undefined') {
-        registerLog("[" + index + "] " + label + ": " + numberValue + " - Não encontrado.");
-        generalList.push("[" + index + "] " + label + ": " + numberValue + " - Não encontrado."+" \n")
+        registerLog("[" + countContinue + "] " + label + ": " + numberValue + " - Não encontrado.");
+        generalList.push("[" + countContinue + "] " + label + ": " + numberValue + " - Não encontrado."+" \n")
     } else if (typeof json !== undefined) {
         const situacao = json.Veiculo[0].situacao;
-        registerLog("[" + index + "] " + label + ": " + numberValue + " - Situação: " + situacao);
-        generalList.push("[" + index + "] " + label + ": " + numberValue + " - Situação: " + situacao+" \n")
+        registerLog("[" + countContinue + "] " + label + ": " + numberValue + " - Situação: " + situacao);
+        generalList.push("[" + countContinue + "] " + label + ": " + numberValue + " - Situação: " + situacao+" \n")
         if (situacao === 'S/1 EMPLAC') {
             totalItemFound++;
             document.getElementById('valueFound').innerHTML = totalItemFound;
@@ -41,8 +52,8 @@ saveResponse = function (json, index, numberValue, label) {
         }
         return null;
     } else {
-        generalList.push("[" + index + "" + label + ": " + numberValue + " - Erro no processamento."+" \n")
-        registerLog("[" + index + "" + label + ": " + numberValue + " - Erro no processamento.")
+        generalList.push("[" + countContinue + "" + label + ": " + numberValue + " - Erro no processamento."+" \n")
+        registerLog("[" + countContinue + "" + label + ": " + numberValue + " - Erro no processamento.")
     }
     return null;
 
@@ -66,7 +77,7 @@ exports.processTextAndGeneratePdf = function (dataList, quantity) {
         pdf.generateReportPDF(generalList, pdfSearchName);
 
     } else {
-        init.completeProcess();
+        console.log("Nada encontrado para geração do PDF")
     }
 }
 

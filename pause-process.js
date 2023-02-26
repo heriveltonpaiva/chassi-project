@@ -9,6 +9,10 @@ exports.pause = function () {
         document.getElementById('actionProcess').value = 'pause';
         document.getElementById('pauseProcess').innerHTML = 'Continuar';
         console.log("Processamento pausado!");
+        //pausado
+        document.getElementById("andamento").style.display = "none";
+        document.getElementById("pausado").style.display = "block";
+        document.getElementById("parado").style.display = "none";
     }
 }
 
@@ -18,6 +22,11 @@ continueProcess = function () {
 
     document.getElementById('actionProcess').value = 'start';
     document.getElementById('pauseProcess').innerHTML = 'Pausar';
+
+    //processando
+    document.getElementById("andamento").style.display = "block";
+    document.getElementById("pausado").style.display = "none";
+    document.getElementById("parado").style.display = "none";
 
     console.log("Processo continuando na posição: " + nextPosition + " e sequencial " + nextNumber);
 

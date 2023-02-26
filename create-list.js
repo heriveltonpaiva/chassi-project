@@ -5,8 +5,7 @@ var url = '';
 var count = 1;
 var logTextArea = '';
 
-exports.createTemporaryList = function () {
-    reset();
+exports.createTemporaryList = function (printConsole) {
     const quantity = document.getElementById('quantity').value;
     const numberValue = document.getElementById('chassiNumber').value;
 
@@ -15,11 +14,17 @@ exports.createTemporaryList = function () {
     console.log("Criação da lista temporária [" + quantity + "] - [" + numberValue + "]");
     if (validate(numberValue, quantity)) {
         var list = ordernedList(generateList(numberValue, quantity));
-        list.forEach(it => {
-            logTextArea += '[' + (count++) + '] - ' + it + '\n';
-            document.getElementById('processAreaList').value = logTextArea;
-        })
-        document.getElementById('totalFound').innerHTML = "0/" + list.length;
+        if (printConsole) {
+            logTextArea = '';
+            count = 1;
+
+            list.forEach(it => {
+                logTextArea += '[' + (count++) + '] - ' + it + '\n';
+                document.getElementById('processAreaList').value = logTextArea;
+            })
+
+            document.getElementById('totalFound').innerHTML = "0/" + list.length;
+        };
         return list;
     }
     return null;
@@ -64,11 +69,18 @@ generateList = function (numberValue, quantity) {
     const initial = numberValue.substring(0, numberValue.length - factor);
     const sequence = numberValue.substring(numberValue.length - factor);
 
+
     let nextValue = parseInt(sequence);
     let cont = 0;
 
     while (cont < quantity) {
-        list.push(initial.concat(nextValue))
+        if(nextValue >= 100){
+           let value = numberValue.substring(0, numberValue.length - (factor +1));
+           list.push(value.concat(nextValue))
+        }else{
+           list.push(initial.concat(nextValue))
+        }
+        
         cont++;
         nextValue = parseInt(sequence) + cont;
     }
@@ -96,9 +108,4 @@ validate = function (numberValue, quantity) {
         console.log('Campo: numeração não informado.')
     }
     return validated;
-}
-
-reset = function () {
-    logTextArea = '';
-    count = 1;
 }

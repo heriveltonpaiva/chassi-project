@@ -85,9 +85,9 @@
 
     </script>
     <div class="tab">
-        <button class="tablinks" onclick="openCity(event, 'tab1')">Gerador</button>
+        <button class="tablinks" onclick="openCity(event, 'tab1')"id="defaultOpen">Gerador</button>
         <button class="tablinks" onclick="openCity(event, 'tab2')">Listagem</button>
-        <button class="tablinks" onclick="openCity(event, 'tab3')"  id="defaultOpen">Processamento</button>
+        <button class="tablinks" onclick="openCity(event, 'tab3')">Processamento</button>
         <!-- <button class="tablinks" onclick="openCity(event, 'tab4')">Relatórios</button> -->
     </div>
 
@@ -179,7 +179,8 @@
                         <button type="button" class="btn btn-warning" id="pauseProcess">Pausar</button>
                         <button type="button" class="btn btn-danger" id="stopProcess">Parar</button>
                     </div>
-                    <input id="actionProcess" type="hidden" value="start" />
+                    <input id="actionProcess" type="hidden" value="start"/>
+                    <input id="countProcess" type="hidden" value="0" />
                 </div>
                 <div class="card-body">
                     <label for="processArea" class="form-label">Acompanhamento</label>
@@ -194,6 +195,12 @@
                     <div style="text-align:center;"><a id="pdfFileName" href="" target="_blank"></a></div>
                     <div style="text-align:center;"><a id="pdfFileReportName" href="" target="_blank"></a></div>
                     <br>
+                    <div style="text-align:center;">
+                        <h1 class="form-label" style="font-size:18px; font-weight:bold;color:blue;" id="andamento">PROCESSANDO</h1>
+                        <h1 class="form-label" style="font-size:18px; font-weight:bold;color:orange;" id="pausado">PAUSADO</h1>
+                        <h1 class="form-label" style="font-size:18px; font-weight:bold;color:red;" id="parado">PARADO</h1>
+                    </div>
+
                     <div class="progress">
                         <div id="progress-bar" class="progress-bar" role="progressbar">0%</div>
                     </div>
@@ -206,8 +213,8 @@
                     </div>    
                 </div>
                 <div class="btn-toolbar" role="toolbar" aria-label="Toolbar botao relatorio"
-                    style="margin-left:40%; margin-right:40%;">
-                <button type="button" class="btn btn-secondary" id="openReports" style="height:40px; width:100%; margin:5px;">Abrir Relatórios</button>
+                    style="margin-left:20%; margin-right:20%;">
+                <button type="button" class="btn btn-secondary" id="openReports" style="height:40px; width:100%; margin-bottom:5px;">Abrir Relatórios</button>
                 </div>
             </div>
         </div>

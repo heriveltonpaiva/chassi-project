@@ -6,11 +6,19 @@ exports.reset = function () {
     document.getElementById('processAreaList').value = '';
     document.getElementById("btnGenerateList").style.display = "block";
     document.getElementById('pdfFileName').innerHTML = ''
-    document.getElementById('apiUrl').value ="https://api.trackear.net/v1/vlcon/?token=40ca7bee3af47e25cb85959f5faca16f&";
-    document.getElementById('chassiNumber').value = '93ZM2ATH0E8816525';
-    document.getElementById('quantity').value = '10';
+    document.getElementById('apiUrl').value ="https://api.trackear.net/v1/vlcon/?token=f612361e57790a6e61a0787ebf289fd0&";
+    document.getElementById('chassiNumber').value = '';
+    document.getElementById('quantity').value = '';
     document.getElementById('valueFound').innerHTML = "0"
     document.getElementById('totalFound').innerHTML = "0/0"
+     //limpo
+     document.getElementById("andamento").style.display = "none";
+     document.getElementById("pausado").style.display = "none";
+     document.getElementById("parado").style.display = "none";
+
+     document.getElementById("initProcess").disabled = true;
+     document.getElementById("pauseProcess").disabled = true;
+     document.getElementById("stopProcess").disabled = true;
 }
 
 exports.newSearch = function () {
@@ -30,7 +38,14 @@ exports.newSearch = function () {
     document.getElementById("btnGenerateList").disabled = false;
     document.getElementById('nextPosition').innerHTML = ' - ';
     document.getElementById('nextNumber').innerHTML = ' - ';
+    document.getElementById('processAreaList').value = '';
+    document.getElementById('actionProcess').value = 'start';
+    document.getElementById('pauseProcess').innerHTML = 'Pausar';
     updateProgressBar(0);
+    //limpo
+    document.getElementById("andamento").style.display = "none";
+    document.getElementById("pausado").style.display = "none";
+    document.getElementById("parado").style.display = "none";
 }
 
 exports.startSearch = function () {
@@ -47,6 +62,11 @@ exports.startProcess = function () {
     document.getElementById("initProcess").disabled = true;
     document.getElementById("pauseProcess").disabled = false;
     document.getElementById("stopProcess").disabled = false;
+
+    //processando
+    document.getElementById("andamento").style.display = "block";
+    document.getElementById("pausado").style.display = "none";
+    document.getElementById("parado").style.display = "none";
 }
 
 exports.pauseProcess = function () {
@@ -59,6 +79,11 @@ exports.stopProcess = function () {
     document.getElementById("pauseProcess").disabled = true;
     document.getElementById("stopProcess").disabled = true;
     updateProgressBar(100);
+
+    //parado
+    document.getElementById("andamento").style.display = "none";
+    document.getElementById("pausado").style.display = "none";
+    document.getElementById("parado").style.display = "block";
 }
 
 exports.completeProcess = function () {
@@ -66,6 +91,21 @@ exports.completeProcess = function () {
     document.getElementById("pauseProcess").disabled = true;
     document.getElementById("stopProcess").disabled = true;
     updateProgressBar(100);
+}
+
+exports.controlStatus = function() {
+    var value = document.getElementById('actionProcess').value;
+    if(value == 'start'){
+        document.getElementById("andamento").style.display = "block";
+        document.getElementById("parado").style.display = "none";
+        document.getElementById("pausado").style.display = "none";
+    }else if(value == 'pause'){
+        document.getElementById("andamento").style.display = "none";
+        document.getElementById("pausado").style.display = "block";
+        document.getElementById("parado").style.display = "none";
+    }else if(value == 'stop'){
+     
+    }
 }
 
 function updateProgressBar(width) {

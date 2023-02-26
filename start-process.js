@@ -4,14 +4,15 @@ const responseProcess = require('./response-process');
 var logTextArea = '';
 var index = 0;
 exports.start = function () {
-    reset();
+    responseProcess.clearConsoleLog();
+    responseProcess.clearCountProcess();
 
     var isListGenerated = document.getElementById('processAreaList').value == '';
     if (isListGenerated) {
         registerLog("ERRO! Necessário gerar a listagem a ser processada!")
     } else {
         var label = document.getElementById('label').innerHTML.split("por")[1];
-        var list = creator.createTemporaryList();
+        var list = creator.createTemporaryList(false);
         processFetch(list, label);
     }
 
@@ -28,16 +29,14 @@ async function processFetch(list, label) {
     const listLength = list.length;
 
     for (const [idx, valueNumber] of list.entries()) {
-
         var url = apiUrl + valueNumber;
-        console.log("Chamando API:"+url);
         if(document.getElementById('actionProcess').value === 'pause'){
-            registerLog('Processamento pausado!')
+            console.log('Processamento pausado!')
             break;
         }else if(document.getElementById('actionProcess').value === 'stop'){
             updateProgressBar(100)
-            updateProgressBar(100)
             init.completeProcess();
+            console.log('Processando parado totalmente: '+idx);
             break;
         }
 
@@ -56,6 +55,7 @@ async function processFetch(list, label) {
         if (listLength <= 100) {
             progress += Math.floor(100 / listLength);
             updateProgressBar(progress);
+            console.log('Processando parado totalmente: '+idx);
         } else {
             if (idx % Math.floor(listLength / 100) == 0) {
                 updateProgressBar(progress++);
@@ -81,8 +81,4 @@ function registerLog(message) {
     var time = new Date().toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1")
     logTextArea += '[' + time + '] - ' + message + '\n';
     document.getElementById('processArea').value = logTextArea;
-}
-
-reset = function () {
-    logTextArea = '';
 }
