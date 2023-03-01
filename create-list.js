@@ -74,7 +74,7 @@ generateList = function (numberValue, quantity) {
     let cont = 0;
 
     while (cont < quantity) {
-        if(nextValue >= 100){
+        if(nextValue >= 100 && quantity >= 100){
            let value = numberValue.substring(0, numberValue.length - (factor +1));
            list.push(value.concat(nextValue))
         }else{

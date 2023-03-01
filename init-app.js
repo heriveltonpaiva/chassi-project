@@ -6,7 +6,7 @@ exports.reset = function () {
     document.getElementById('processAreaList').value = '';
     document.getElementById("btnGenerateList").style.display = "block";
     document.getElementById('pdfFileName').innerHTML = ''
-    document.getElementById('apiUrl').value ="https://api.trackear.net/v1/vlcon/?token=f612361e57790a6e61a0787ebf289fd0&";
+    document.getElementById('apiUrl').value ="https://api.trackear.net/v1/vlcon/?token=782cf6aa0c41ed71fdafff58c1aaa492&";
     document.getElementById('chassiNumber').value = '';
     document.getElementById('quantity').value = '';
     document.getElementById('valueFound').innerHTML = "0"
