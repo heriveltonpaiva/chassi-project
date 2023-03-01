@@ -39,7 +39,7 @@ async function processFetch(list, label) {
             console.log('Processando parado totalmente: '+idx);
             break;
         }
-
+        console.log(url);
         const response = await fetch(url).then(function (response) {
             if (response.status == 404) {
                 registerLog('Url da API incorreta!')
